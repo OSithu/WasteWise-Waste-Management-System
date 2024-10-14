@@ -1,0 +1,12 @@
+package interfaces;
+
+import java.util.List;
+import model.Feedback;
+
+public interface IFeedbackDAO {
+    List<Feedback> selectAllFeedbacks(); // Retrieves all feedbacks
+    Feedback selectFeedback(int feedbackId); // Retrieves a specific feedback based on ID
+    void insertFeedback(Feedback feedback); // Inserts a new feedback record
+    void updateFeedback(Feedback feedback); // Updates an existing feedback record
+    void deleteFeedback(int feedbackId); // Deletes a feedback record
+}

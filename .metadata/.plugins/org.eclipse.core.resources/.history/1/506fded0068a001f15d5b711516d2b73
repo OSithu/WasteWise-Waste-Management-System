@@ -1,0 +1,118 @@
+package dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+import interfaces.ISpecialRequestDAO;
+import model.SpecialRequest;
+import utility.DBConnection;
+
+public class SpecialRequestDAO implements ISpecialRequestDAO {
+    // SQL Queries for Special Request operations
+    String SELECT_REQUEST_BY_ID = "SELECT * FROM special_requests WHERE request_id = ?";
+    String SELECT_ALL_REQUESTS = "SELECT * FROM special_requests";
+    String INSERT_REQUEST = "INSERT INTO special_requests (user_id, request_date, waste_type, requested_pickup_date, additional_details, status) VALUES (?, ?, ?, ?, ?, ?)";
+    String UPDATE_REQUEST = "UPDATE special_requests SET user_id=?, request_date=?, waste_type=?, requested_pickup_date=?, additional_details=?, status=? WHERE request_id = ?";
+    String DELETE_REQUEST = "DELETE FROM special_requests WHERE request_id = ?";
+
+    @Override
+    public List<SpecialRequest> selectAllSpecialRequests() {
+        List<SpecialRequest> requests = new ArrayList<>();
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement stmt = con.prepareStatement(SELECT_ALL_REQUESTS);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                int requestId = rs.getInt("request_id");
+                int userId = rs.getInt("user_id");
+                Timestamp requestDate = rs.getTimestamp("request_date");
+                String wasteType = rs.getString("waste_type");
+                Date requestedPickupDate = rs.getDate("requested_pickup_date");
+                String additionalDetails = rs.getString("additional_details");
+                String status = rs.getString("status");
+
+                SpecialRequest request = new SpecialRequest(requestId, userId, requestDate, wasteType, requestedPickupDate, additionalDetails, status);
+                requests.add(request);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return requests;
+    }
+
+    @Override
+    public SpecialRequest selectSpecialRequest(int requestId) {
+        SpecialRequest request = new SpecialRequest();
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement stmt = con.prepareStatement(SELECT_REQUEST_BY_ID)) {
+
+            stmt.setInt(1, requestId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    int userId = rs.getInt("user_id");
+                    Timestamp requestDate = rs.getTimestamp("request_date");
+                    String wasteType = rs.getString("waste_type");
+                    Date requestedPickupDate = rs.getDate("requested_pickup_date");
+                    String additionalDetails = rs.getString("additional_details");
+                    String status = rs.getString("status");
+
+                    request = new SpecialRequest(requestId, userId, requestDate, wasteType, requestedPickupDate, additionalDetails, status);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return request;
+    }
+
+    @Override
+    public void insertSpecialRequest(SpecialRequest specialRequest) {
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement stmt = con.prepareStatement(INSERT_REQUEST)) {
+
+            stmt.setInt(1, specialRequest.getUserId());
+            stmt.setTimestamp(2, specialRequest.getRequestDate());
+            stmt.setString(3, specialRequest.getWasteType());
+            stmt.setDate(4, new java.sql.Date(specialRequest.getRequestedPickupDate().getTime()));
+            stmt.setString(5, specialRequest.getAdditionalDetails());
+            stmt.setString(6, specialRequest.getStatus());
+
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateSpecialRequest(SpecialRequest specialRequest) {
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement stmt = con.prepareStatement(UPDATE_REQUEST)) {
+
+            stmt.setInt(1, specialRequest.getUserId());
+            stmt.setTimestamp(2, specialRequest.getRequestDate());
+            stmt.setString(3, specialRequest.getWasteType());
+            stmt.setDate(4, new java.sql.Date(specialRequest.getRequestedPickupDate().getTime()));
+            stmt.setString(5, specialRequest.getAdditionalDetails());
+            stmt.setString(6, specialRequest.getStatus());
+            stmt.setInt(7, specialRequest.getRequestId());
+
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void deleteSpecialRequest(int requestId) {
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement stmt = con.prepareStatement(DELETE_REQUEST)) {
+
+            stmt.setInt(1, requestId);
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}

@@ -1,0 +1,22 @@
+package interfaces;
+
+import java.util.List;
+import model.SpecialRequest;
+
+public interface ISpecialRequestDAO {
+
+    // Retrieves all special requests from the database
+    List<SpecialRequest> selectAllSpecialRequests();
+
+    // Retrieves a specific special request based on its ID
+    SpecialRequest selectSpecialRequest(int requestId);
+
+    // Inserts a new special request record into the database
+    void insertSpecialRequest(SpecialRequest specialRequest);
+
+    // Updates an existing special request record in the database
+    void updateSpecialRequest(SpecialRequest specialRequest);
+
+    // Deletes a special request record from the database based on its ID
+    void deleteSpecialRequest(int requestId);
+}

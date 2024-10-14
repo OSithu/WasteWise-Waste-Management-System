@@ -1,0 +1,121 @@
+package servlet;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import model.SpecialRequest;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.List;
+import dao.SpecialRequestDAO;
+import interfaces.ISpecialRequestDAO;
+
+@WebServlet("/specialRequests")
+public class SpecialRequestServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+    ISpecialRequestDAO iSpecialRequestDAO = new SpecialRequestDAO();
+    private Gson gson = new Gson(); 
+
+    public SpecialRequestServlet() {
+        super();
+    }
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String action = request.getParameter("action");
+        response.setContentType("application/json"); 
+
+        if (action == null) {
+            List<SpecialRequest> requests = iSpecialRequestDAO.selectAllSpecialRequests();
+            response.getWriter().write(gson.toJson(requests));
+        } else if (action.equals("edit")) {
+            String idParam = request.getParameter("id");
+            if (idParam == null || idParam.trim().isEmpty()) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("{\"error\": \"Missing request ID\"}");
+                return;
+            }
+
+            idParam = idParam.trim();
+
+            try {
+                int requestId = Integer.parseInt(idParam);
+                SpecialRequest request = iSpecialRequestDAO.selectSpecialRequest(requestId);
+                if (request != null) {
+                    response.getWriter().write(gson.toJson(request));
+                } else {
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    response.getWriter().write("{\"error\": \"Request not found\"}");
+                }
+            } catch (NumberFormatException e) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("{\"error\": \"Invalid request ID format\"}");
+            }
+        }
+    }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("application/json");
+        BufferedReader reader = request.getReader();
+        SpecialRequest specialRequest = null;
+        
+        try {
+            specialRequest = gson.fromJson(reader, SpecialRequest.class);
+            specialRequest.setRequestDate(new Timestamp(System.currentTimeMillis())); 
+            iSpecialRequestDAO.insertSpecialRequest(specialRequest);
+            response.setStatus(HttpServletResponse.SC_CREATED);
+            response.getWriter().write("{\"message\": \"Special request created successfully\"}");
+        } catch (JsonSyntaxException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("{\"error\": \"Invalid JSON input\"}");
+        }
+    }
+
+    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("application/json");
+        BufferedReader reader = request.getReader();
+        SpecialRequest specialRequest = null;
+
+        try {
+            specialRequest = gson.fromJson(reader, SpecialRequest.class);
+            if (specialRequest.getRequestId() == 0) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("{\"error\": \"Missing request ID\"}");
+                return;
+            }
+
+            iSpecialRequestDAO.updateSpecialRequest(specialRequest);
+            response.getWriter().write("{\"message\": \"Special request updated successfully\"}");
+        } catch (JsonSyntaxException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("{\"error\": \"Invalid JSON input\"}");
+        }
+    }
+
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String idParam = request.getParameter("id");
+        response.setContentType("application/json");
+
+        if (idParam == null || idParam.trim().isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("{\"error\": \"Missing request ID\"}");
+            return;
+        }
+
+        idParam = idParam.trim();
+
+        try {
+            int requestId = Integer.parseInt(idParam);
+            iSpecialRequestDAO.deleteSpecialRequest(requestId);
+            response.getWriter().write("{\"message\": \"Special request deleted successfully\"}");
+        } catch (NumberFormatException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("{\"error\": \"Invalid request ID format\"}");
+        }
+    }
+}

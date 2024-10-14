@@ -1,0 +1,12 @@
+INDEX VERSION 1.134+C:\Users\USER\Desktop\WasteMS\.metadata\.plugins\org.eclipse.jdt.core
+2721425389.index
+3858985517.index
+1865797976.index
+4168127022.index
+1015699095.index
+3981518639.index
+2293912758.index
+1519288111.index
+2733422892.index
+3939481733.index
+1330412487.index
