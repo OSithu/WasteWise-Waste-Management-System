@@ -1,6 +1,0 @@
-INDEX VERSION 1.4+C:\Users\USER\Desktop\WasteMS\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
-216764041.index
-2693199318.index
-2092758775.index
-4250611880.index
-230423063.index
