@@ -1,7 +1,0 @@
-127.0.0.1 - - [14/Oct/2024:13:23:40 +0530] "GET / HTTP/1.1" 404 752
-0:0:0:0:0:0:0:1 - - [14/Oct/2024:13:23:40 +0530] "GET /Waste_management_CSSE/ HTTP/1.1" 404 778
-0:0:0:0:0:0:0:1 - - [14/Oct/2024:13:23:47 +0530] "POST /Waste_management_CSSE/collectionRoutes?action=insert HTTP/1.1" 404 794
-0:0:0:0:0:0:0:1 - - [14/Oct/2024:13:24:51 +0530] "POST /Waste_management_CSSE/collectionRoutes?action=create HTTP/1.1" 404 794
-0:0:0:0:0:0:0:1 - - [14/Oct/2024:13:25:16 +0530] "POST /Waste_management_CSSE/collectionRoutes?action=insert HTTP/1.1" 404 794
-0:0:0:0:0:0:0:1 - - [14/Oct/2024:13:25:44 +0530] "POST /Waste_management_CSSE/collectionRoutes?action=insert HTTP/1.1" 404 794
-0:0:0:0:0:0:0:1 - - [14/Oct/2024:13:25:58 +0530] "GET /Waste_management_CSSE/collectionRoutes HTTP/1.1" 404 794
